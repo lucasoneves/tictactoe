@@ -1,4 +1,6 @@
 let GameBoard = new Object();
+let board = document.querySelector(".board");
+
 let Player = (name, character, choices) => {
   return { name, character, choices };
 };
@@ -33,7 +35,9 @@ function checkWin(choice, player) {
         (value, index, array) => value === array[0]
       );
       if ((subArray.length >= 3) & allEqual) {
-        console.log(subArray[0] + " ganhou");
+        alert(subArray[0] + " ganhou");
+        GameBoard.flowControl.status = false;
+        break;
       }
     }
     return null;
@@ -45,7 +49,7 @@ function checkWin(choice, player) {
   square.forEach((e) => {
     e.addEventListener("click", (event) => {
       const squareClicked = event.target;
-      if (!squareClicked.innerHTML.length) {
+      if (!squareClicked.innerHTML.length && GameBoard.flowControl.status) {
         squareClicked.innerHTML += GameBoard.flowControl.character;
       } else {
         return false;
@@ -61,3 +65,12 @@ function checkWin(choice, player) {
     });
   });
 })();
+
+function startGame() {
+  const playerOne = document.getElementsByName("player-one");
+  const playerTwo = document.getElementsByName("player-two");
+  GameBoard.playerOne.name = playerOne;
+  GameBoard.playerTwo.name = playerTwo;
+  GameBoard.flowControl.status = true;
+  board.style = "display, block";
+}
