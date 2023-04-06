@@ -6,11 +6,7 @@ let Player = (name, character, choices) => {
 };
 
 GameBoard.gameboard = [];
-GameBoard.playerOne = Player("playerOne", "X", []);
-GameBoard.playerTwo = Player("playerTwo", "O", []);
 GameBoard.flowControl = {};
-
-GameBoard.flowControl = GameBoard.playerOne;
 let possibleWins = [
   { values: [1, 2, 3], players: [] },
   { values: [1, 5, 9], players: [] },
@@ -36,8 +32,7 @@ function checkWin(choice, player) {
       );
       if ((subArray.length >= 3) & allEqual) {
         alert(subArray[0] + " ganhou");
-        GameBoard.flowControl.status = false;
-        break;
+        GameBoard.flowControl.status = "ended";
       }
     }
     return null;
@@ -49,17 +44,24 @@ function checkWin(choice, player) {
   square.forEach((e) => {
     e.addEventListener("click", (event) => {
       const squareClicked = event.target;
-      if (!squareClicked.innerHTML.length && GameBoard.flowControl.status) {
-        squareClicked.innerHTML += GameBoard.flowControl.character;
+      if (!squareClicked.innerHTML.length) {
+        console.log(GameBoard);
+        squareClicked.innerHTML += GameBoard.flowControl.player;
       } else {
         return false;
       }
-      if (GameBoard.flowControl === GameBoard.playerOne) {
+      if (GameBoard.flowControl.player.name === GameBoard.playerOne.name) {
         GameBoard.playerOne.choices.push(+event.target.dataset.target);
-        GameBoard.flowControl = GameBoard.playerTwo;
+        GameBoard.flowControl = {
+          player: GameBoard.playerTwo,
+          status: GameBoard.flowControl.status,
+        };
         checkWin(+event.target.dataset.target, "playerOne");
       } else {
-        GameBoard.flowControl = GameBoard.playerOne;
+        GameBoard.flowControl = {
+          player: GameBoard.playerOne,
+          status: GameBoard.flowControl.status,
+        };
         checkWin(+event.target.dataset.target, "playerTwo");
       }
     });
@@ -67,10 +69,9 @@ function checkWin(choice, player) {
 })();
 
 function startGame() {
-  const playerOne = document.getElementsByName("player-one");
-  const playerTwo = document.getElementsByName("player-two");
-  GameBoard.playerOne.name = playerOne;
-  GameBoard.playerTwo.name = playerTwo;
-  GameBoard.flowControl.status = true;
-  board.style = "display, block";
+  const playerOne = document.getElementsByName("player-one")[0].value;
+  const playerTwo = document.getElementsByName("player-two")[0].value;
+  GameBoard.playerOne = Player(playerOne, "X", []);
+  GameBoard.playerTwo = Player(playerTwo, "O", []);
+  GameBoard.flowControl = { status: "running", player: GameBoard.playerOne };
 }
